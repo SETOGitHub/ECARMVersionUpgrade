@@ -13,11 +13,14 @@ configuration DomainJoin
         [System.Management.Automation.PSCredential] $DomainAccount,
         [string] $LocalAdmins='',
         [string] $SQLAdmins='',
-        [string] $scriptFolderUrl="https://raw.githubusercontent.com/Microsoft/MSITARM/develop/all-scripts/",
+        [string] $scriptFolderUrl="https://armnptemplates.blob.core.windows.net/armv3/develop/all-scripts/",
         [string] $primaryWorkspaceID,
         [string] $primaryWorkspaceKey,
         [string] $secondaryWorkspaceID,
-        [string] $secondaryWorkspaceKey
+        [string] $secondaryWorkspaceKey,
+		[string] $environmentName,
+        [string] $serviceKey,
+        [string] $roleName
     ) 
     
     Write-Verbose "--------Domain Join Script execution start----------"
@@ -602,6 +605,64 @@ configuration DomainJoin
             DependsOn = "[Script]SetPowerPatchPs1"
         }
 
+		Script InstallXpert {
+            GetScript  = {
+                @{
+                }
+            }
+            SetScript  = {
+                    
+                $xpertBitsLocation = '\\sppoc01.partners.extranet.microsoft.com\InstallNonAPXpertAgent'
+                $targetDrive = 'C:\'
+                $xpertEnvironment = 'OSG'
+                $xpertInstallScriptPath = $targetDrive + 'InstallNonAPXpertAgent\InstallNonAPXpertAgent.ps1'
+                $tempPSDrive = "R"
+
+                $environmentName = $($using:environmentName).Trim()
+                $serviceKey = $($using:serviceKey).Trim()
+                $roleName = $($using:roleName).Trim()
+
+                Try {
+                      
+                    if (!(Get-EventLog -List | where {$_.Log -eq 'xPert'})) {New-EventLog -LogName xPert -Source XpertScript} 
+
+                    New-PSDrive -Name $tempPSDrive -PSProvider FileSystem -Root $xpertBitsLocation -Credential $DomainCreds                    
+                    Write-EventLog -LogName xPert -Source XpertScript -EntryType Information -EventId 1 -Message "New PSdrive $tempPSDrive created successfully"
+                    
+                    Copy-Item  $xpertBitsLocation -Destination $targetDrive -Recurse -Force
+                    Write-EventLog -LogName xPert -Source XpertScript -EntryType Information -EventId 1 -Message "Copied Xpert script from Network location to $targetDrive"
+
+                    Remove-PSDrive $tempPSDrive -Force
+                    Write-EventLog -LogName xPert -Source XpertScript -EntryType Information -EventId 1 -Message "PSdrive $tempPSDrive removed successfully."
+                }
+
+                Catch {
+                    $customError = $_.Exception.Message
+                    Write-EventLog -LogName xPert -Source XpertScript -EntryType Error -EventId 1 -Message $customError
+                }
+
+                Try {
+                    powershell -ExecutionPolicy Unrestricted -File $xpertInstallScriptPath -targetDrive $targetDrive -environmentName $environmentName -roleName $roleName -serviceKey $serviceKey -xpertEnvironment $xpertEnvironment -Force
+                    Write-EventLog -LogName xPert -Source XpertScript -EntryType Information -EventId 2 -Message "Kicked off Xpert Installation script at Location - $xpertInstallScriptPath"
+                }
+                Catch {
+                    $customError = $_.Exception.Message
+                    Write-EventLog -LogName xPert -Source XpertScript -EntryType Error -EventId 2 -Message $customError
+                }
+
+            }
+                    
+            TestScript = {
+                $xpertBitsLocation = '\\sppoc01.partners.extranet.microsoft.com\InstallNonAPXpertAgent'
+                $targetDrive = 'C:\'
+                $xpertEnvironment = 'OSG'
+                $xpertInstallScriptPath = $targetDrive + 'InstallNonAPXpertAgent\InstallNonAPXpertAgent.ps1'
+                if (Test-Path $xpertInstallScriptPath) {return $true}
+                else {return $false}
+             
+            }    
+            DependsOn  = '[Script]SetPowerPatchJob'
+        }
         ############################################
         # End
         ############################################
@@ -628,7 +689,7 @@ configuration DomainJoin
 
                 return $Pass
             }
-            DependsOn = "[Script]SetPowerPatchJob"
+            DependsOn = "[Script]InstallXpert"
            }
 
           Script SetOMSCityWorkspaces {

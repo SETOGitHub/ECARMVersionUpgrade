@@ -49,7 +49,7 @@
   "variables": {
 
     "branch": "master",
-    "_artifactsLocation": "[concat('https://raw.githubusercontent.com/Microsoft/MSITARM/',variables('branch'),'/ARO-toolkit')]",
+    "_artifactsLocation": "[concat('https://armnptemplates.blob.core.windows.net/armv3/',variables('branch'),'/ARO-toolkit')]",
      "OMSWorkspaceId": "",
     "nestedTemplates": {
       "Automation": "[concat(variables('_artifactsLocation'), '/nestedtemplates/Automation.json')]"

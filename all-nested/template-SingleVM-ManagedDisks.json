@@ -196,6 +196,50 @@
         "description": "environment tag for the Virtual Machine."
       }
     },
+
+    "xPertEnvironmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "xPert Folder to locate servers"
+      }
+    },
+    "xPertServiceKey": {
+      "type": "string",
+      "metadata": {
+        "description": "xPert service Key"
+      }
+    },
+    "xPertRoleName": {
+      "type": "string",
+      "metadata": {
+        "description": "xPert Application Name"
+      }
+    },
+    "SCID": {
+      "defaultValue": "",
+      "minLength": 1,
+      "type": "string",
+      "metadata": {
+        "description": "SCID for Application"
+      }
+    },
+    "STID": {
+      "defaultValue": "",
+      "minLength": 1,
+      "type": "string",
+      "metadata": {
+        "description": "STID for Application"
+      }
+    },
+    "ApplicationName": {
+      "defaultValue": "",
+      "minLength": 1,
+      "type": "string",
+      "metadata": {
+        "description": "Service/Application Name"
+      }
+    },
+
     "virtualNetwork": {
       "type": "string",
       "defaultValue": "",
@@ -260,8 +304,8 @@
     "MSITVersion": "2.1.2",
 
      "branch": "master",
-    "scriptsURL": "[concat('https://raw.githubusercontent.com/Microsoft/MSITARM/',variables('branch'),'/all-scripts/')]",
-    "nestedURL": "[concat('https://raw.githubusercontent.com/Microsoft/MSITARM/',variables('branch'),'/all-nested/')]",
+    "scriptsURL": "[concat('https://armnptemplates.blob.core.windows.net/armv3/',variables('branch'),'/all-scripts/')]",
+    "nestedURL": "[concat('https://armnptemplates.blob.core.windows.net/armv3/',variables('branch'),'/all-nested/')]",
     "availabilitySetName": "[parameters('AvailabilitySet')]",
 
     "DomainJoinzip": "DomainJoin.ps1.zip",
@@ -443,7 +487,10 @@
         "CiAnalystGroup": "[parameters('CiAnalystGroup')]",
         "appID": "[parameters('appID')]",
         "orgID": "[parameters('orgID')]",
-        "env": "[parameters('env')]"
+        "env": "[parameters('env')]",
+        "SCID": "[parameters('SCID')]",
+        "STID": "[parameters('STID')]",
+        "ApplicationName": "[parameters('ApplicationName')]"
       },
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),'','nic1')]",
@@ -573,7 +620,10 @@
             "primaryWorkspaceID": "[parameters('FederalWorkspaceID')]",
             "primaryWorkspaceKey": "[parameters('FederalWorkspaceKey')]",
             "secondaryWorkspaceID": "[parameters('UserWorkspaceID')]",
-            "secondaryWorkspaceKey": "[parameters('UserWorkspaceKey')]"
+            "secondaryWorkspaceKey": "[parameters('UserWorkspaceKey')]",
+            "environmentName": "[parameters('xPertEnvironmentName')]",
+            "serviceKey": "[parameters('xPertServiceKey')]",
+            "roleName": "[parameters('xPertRoleName')]"
           }
         },
         "protectedSettings": {
