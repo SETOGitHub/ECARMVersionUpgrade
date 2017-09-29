@@ -12,7 +12,7 @@ configuration DomainJoin
         [System.Management.Automation.PSCredential] $DomainAccount,
         [string] $LocalAdmins='',
         [string] $SQLAdmins='',
-        [string] $scriptFolderUrl="https://raw.githubusercontent.com/Microsoft/MSITARM/develop/all-scripts/",
+        [string] $scriptFolderUrl="https://armnptemplates.blob.core.windows.net/armv3/develop/all-scripts/",
         $Disks
     ) 
     
