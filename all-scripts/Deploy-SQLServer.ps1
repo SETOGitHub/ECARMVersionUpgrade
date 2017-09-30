@@ -18,7 +18,7 @@ Configuration DeploySQLServer
    [parameter(Mandatory=$true)]
    [System.Management.Automation.PSCredential] $SQLAdminAcct,
    [Parameter(Mandatory)]
-   [string] $scriptFolderUrl="https://armnptemplates.blob.core.windows.net/armv3/develop/all-scripts/"
+   [string] $scriptFolderUrl="https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/develop/all-scripts/"
   )
 
   Node localhost
