@@ -12,7 +12,7 @@ configuration DomainJoin
         [System.Management.Automation.PSCredential] $DomainAccount,
         [string] $LocalAdmins='',
         [string] $SQLAdmins='',
-        [string] $scriptFolderUrl="https://armnptemplates.blob.core.windows.net/armv3/develop/all-scripts/",
+        [string] $scriptFolderUrl="https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/develop/all-scripts/",
         $Disks
     ) 
     

@@ -259,8 +259,8 @@
     "MSITVersion": "2.1.2",
 
      "branch": "master",
-    "scriptsURL": "[concat('https://armnptemplates.blob.core.windows.net/armv3/',variables('branch'),'/all-scripts/')]",
-    "nestedURL": "[concat('https://armnptemplates.blob.core.windows.net/armv3/',variables('branch'),'/all-nested/')]",
+    "scriptsURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-scripts/')]",
+    "nestedURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-nested/')]",
 
     "availabilitySetName": "[parameters('AvailabilitySet')]",
     "DomainJoinzip": "DomainJoin.ps1.zip",

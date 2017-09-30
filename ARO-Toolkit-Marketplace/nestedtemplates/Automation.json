@@ -37,7 +37,7 @@
     },
     "_artifactsLocation": {
       "type": "string",
-      "defaultValue": "https://armnptemplates.blob.core.windows.net/armv3//develop/ARO-Toolkit-Marketplace",
+      "defaultValue": "https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade//develop/ARO-Toolkit-Marketplace",
       "metadata": {
         "description": "The base URI where artifacts required by this template are located"
       }
