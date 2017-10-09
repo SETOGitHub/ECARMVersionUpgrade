@@ -213,6 +213,48 @@
         "description": "environment tag for the Virtual Machine."
       }
     },
+    "xPertEnvironmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "xPert Folder to locate servers"
+      }
+    },
+    "xPertServiceKey": {
+      "type": "string",
+      "metadata": {
+        "description": "xPert service Key"
+      }
+    },
+    "xPertRoleName": {
+      "type": "string",
+      "metadata": {
+        "description": "xPert Application Name"
+      }
+    },
+    "SCID": {
+      "defaultValue": "",
+      "minLength": 1,
+      "type": "String",
+      "metadata": {
+        "description": "SCID for Application"
+      }
+    },
+    "STID": {
+      "defaultValue": "",
+      "minLength": 1,
+      "type": "String",
+      "metadata": {
+        "description": "STID for Application"
+      }
+    },
+    "ApplicationName": {
+      "defaultValue": "",
+      "minLength": 1,
+      "type": "String",
+      "metadata": {
+        "description": "Service/Application Name"
+      }
+    },
     "virtualNetwork": {
       "type": "string",
       "defaultValue": "",
@@ -388,7 +430,10 @@
         "CiAnalystGroup": "[parameters('CiAnalystGroup')]",
         "appID": "[parameters('appID')]",
         "orgID": "[parameters('orgID')]",
-        "env": "[parameters('env')]"
+        "env": "[parameters('env')]",
+        "SCID": "[parameters('SCID')]",
+        "STID": "[parameters('STID')]",
+        "ApplicationName": "[parameters('ApplicationName')]"
       },
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),'','nic1')]",
@@ -559,7 +604,10 @@
             "primaryWorkspaceID": "[parameters('FederalWorkspaceID')]",
             "primaryWorkspaceKey": "[parameters('FederalWorkspaceKey')]",
             "secondaryWorkspaceID": "[parameters('UserWorkspaceID')]",
-            "secondaryWorkspaceKey": "[parameters('UserWorkspaceKey')]"
+            "secondaryWorkspaceKey": "[parameters('UserWorkspaceKey')]",
+            "environmentName": "[parameters('xPertEnvironmentName')]",
+            "serviceKey": "[parameters('xPertServiceKey')]",
+            "roleName": "[parameters('xPertRoleName')]"
           }
         },
         "protectedSettings": {

@@ -190,6 +190,48 @@
         "description": "environment tag for the Virtual Machine."
       }
     },
+    "xPertEnvironmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "xPert Folder to locate servers"
+      }
+    },
+    "xPertServiceKey": {
+      "type": "string",
+      "metadata": {
+        "description": "xPert service Key"
+      }
+    },
+    "xPertRoleName": {
+      "type": "string",
+      "metadata": {
+        "description": "xPert Application Name"
+      }
+    },
+    "SCID": {
+      "defaultValue": "",
+      "minLength": 1,
+      "type": "String",
+      "metadata": {
+        "description": "SCID for Application"
+      }
+    },
+    "STID": {
+      "defaultValue": "",
+      "minLength": 1,
+      "type": "String",
+      "metadata": {
+        "description": "STID for Application"
+      }
+    },
+    "ApplicationName": {
+      "defaultValue": "",
+      "minLength": 1,
+      "type": "String",
+      "metadata": {
+        "description": "Service/Application Name"
+      }
+    },
     "localAdmins": {
       "type": "string",
       "defaultValue": "",
@@ -264,11 +306,9 @@
   "variables": {
     "apiVersion": "2015-06-15",
     "MSITVersion": "2.1.2",
- 
-     "branch": "master",
+    "branch": "master",
     "scriptsURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-scripts/')]",
     "nestedURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-nested/')]",
-
     "availabilitySetName": "[parameters('AvailabilitySet')]",
     "DomainJoinzip": "DomainJoin.ps1.zip",
     "formatDiskszip": "FormatDataDisk.ps1.zip",
@@ -276,18 +316,15 @@
     "diskarrayTemplate": "ManagedDiskArray.json",
     "SetStaticIP": "template-SetStaticIP.json",
     "loadBalancerName": "[parameters('loadBalancerName')]",
-
     "modulesUrl": "[concat(variables('scriptsURL'),variables('DomainJoinzip'))]",
     "FormatDisksUrl": "[concat(variables('nestedURL'), variables('formatDiskstemplate'))]",
     "SetStaticIPUrl": "[concat(variables('nestedURL'),variables('SetStaticIP'))]",
-
     "vnetSubscriptionid": "[subscription().subscriptionId]",
     "vnetID": "[concat('/subscriptions/',variables('vnetSubscriptionid'),'/resourceGroups/',parameters('vnetResourceGroup'),'/providers/Microsoft.Network/virtualnetworks/',parameters('virtualNetwork'))]",
     "imageOffer": "[parameters('imageOffer')]",
     "imagePublisher": "[parameters('imagePublisher')]",
     "sku": "[parameters('sku')]",
     "nicName": "[parameters('vmName')]",
-
     "subnetName": "[parameters('subnetName')]",
     "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
     "autologonContent": "[concat('<AutoLogon><Password><Value>',parameters('localAdminPassword'),'</Value></Password><Domain>.</Domain><Enabled>true</Enabled><LogonCount>1</LogonCount><Username>',parameters('localAdminUserName'),'</Username></AutoLogon>')]",
@@ -394,11 +431,21 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "vmName": { "value": "[concat(parameters('vmName'),copyindex(1))]" },
-          "diskCount": { "value": "[parameters('diskCount')]" },
-          "diskCaching": { "value": "[variables('diskCaching')]" },
-          "diskSizeGB": { "value": "[parameters('diskSize')]" },
-          "StorageAccountType": { "value": "[parameters('StorageAccountType')]" }
+          "vmName": {
+            "value": "[concat(parameters('vmName'),copyindex(1))]"
+          },
+          "diskCount": {
+            "value": "[parameters('diskCount')]"
+          },
+          "diskCaching": {
+            "value": "[variables('diskCaching')]"
+          },
+          "diskSizeGB": {
+            "value": "[parameters('diskSize')]"
+          },
+          "StorageAccountType": {
+            "value": "[parameters('StorageAccountType')]"
+          }
         }
       }
     },
@@ -471,7 +518,6 @@
               "subnet": {
                 "id": "[variables('subnetRef')]"
               },
-
               "privateIPAllocationMethod": "Dynamic"
             },
             "name": "LoadBalancerFrontend"
@@ -528,7 +574,10 @@
         "CiAnalystGroup": "[parameters('CiAnalystGroup')]",
         "appID": "[parameters('appID')]",
         "orgID": "[parameters('orgID')]",
-        "env": "[parameters('env')]"
+        "env": "[parameters('env')]",
+        "SCID": "[parameters('SCID')]",
+        "STID": "[parameters('STID')]",
+        "ApplicationName": "[parameters('ApplicationName')]"
       },
       "copy": {
         "name": "virtualMachineLoop",
@@ -637,7 +686,10 @@
             "primaryWorkspaceID": "[parameters('FederalWorkspaceID')]",
             "primaryWorkspaceKey": "[parameters('FederalWorkspaceKey')]",
             "secondaryWorkspaceID": "[parameters('UserWorkspaceID')]",
-            "secondaryWorkspaceKey": "[parameters('UserWorkspaceKey')]"
+            "secondaryWorkspaceKey": "[parameters('UserWorkspaceKey')]",
+            "environmentName": "[parameters('xPertEnvironmentName')]",
+            "serviceKey": "[parameters('xPertServiceKey')]",
+            "roleName": "[parameters('xPertRoleName')]"
           }
         },
         "protectedSettings": {
@@ -682,7 +734,6 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('vmName'),copyindex(1)),variables('vmExtensionName'))]"
-
       ]
     },
     {
@@ -701,10 +752,9 @@
         "publisher": "Microsoft.Compute",
         "type": "BGInfo",
         "typeHandlerVersion": "2.1",
-        "settings": { },
+        "settings": {},
         "protectedSettings": null
       }
     }
   ]
 }
-
