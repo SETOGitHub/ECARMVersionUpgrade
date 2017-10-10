@@ -113,7 +113,7 @@ configuration DomainJoin
 
                 $startTime = '{0:HH:MM}' -f $([datetime] $(get-date).AddHours(1))
                    
-                schtasks /Create /RU "NT AUTHORITY\SYSTEM" /F /SC "OnStart" /delay "0001:00" /TN "$AddJobName" /TR "cmd.exe /c net localgroup administrators /add $Account"
+                schtasks /Create /RU "NT AUTHORITY\SYSTEM" /F /SC "OnStart" /delay "0001:00" /TN "$AddJobName" /TR "PowerShell.exe -Command  Add-LocalGroupMember -Group administrators -Member $Account"
 
                 schtasks /Create /RU "NT AUTHORITY\SYSTEM" /F /SC "Once" /st $starttime /z /v1 /TN "$RemoveJobName" /TR "schtasks.exe /delete /tn $AddJobName /f"
 
