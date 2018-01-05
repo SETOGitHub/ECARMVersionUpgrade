@@ -15,6 +15,13 @@
         "Description": "Number of Azure VM to create."
       }
     },
+    "nodeNumber": {
+      "defaultValue": 1,
+      "type": "Int",
+      "metadata": {
+        "Description": "Number of Azure VM to create."
+      }
+    },
     "DomainName": {
       "type": "string",
       "metadata": {
@@ -101,7 +108,7 @@
   "resources": [
     {
       "apiVersion": "2015-05-01-preview",
-      "name": "[concat(parameters('vmName'),'1','/', variables('vmILBExtensionName'))]",
+      "name": "[concat(parameters('vmName'),parameters('nodeNumber'),'/', variables('vmILBExtensionName'))]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "location": "[resourceGroup().location]",
       "properties": {
@@ -113,7 +120,7 @@
         "settings": {
           "fileUris": [
             "[variables('customILBScriptFileUri')]"
-          ]          
+          ]
         },
         "protectedSettings": {
           "commandToExecute": "[variables('ILBcommandToExecute')]"

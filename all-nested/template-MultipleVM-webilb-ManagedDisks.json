@@ -30,6 +30,13 @@
         "description": "Number of VMs to deploy"
       }
     },
+    "nodeNumber": {
+      "defaultValue": 1,
+      "type": "Int",
+      "metadata": {
+        "Description": "Number of Azure VM to create."
+      }
+    },
     "localAdminUserName": {
       "type": "string",
       "metadata": {
@@ -418,7 +425,7 @@
   "resources": [
     {
       "apiVersion": "2015-01-01",
-      "name": "[concat(parameters('vmName'),copyindex(1),'-DiskArray')]",
+      "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'-DiskArray')]",
       "type": "Microsoft.Resources/deployments",
       "copy": {
         "name": "DataDiskLoop",
@@ -432,7 +439,7 @@
         },
         "parameters": {
           "vmName": {
-            "value": "[concat(parameters('vmName'),copyindex(1))]"
+            "value": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')))]"
           },
           "diskCount": {
             "value": "[parameters('diskCount')]"
@@ -451,7 +458,7 @@
     },
     {
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('nicName'),copyindex(1),'nic1')]",
+      "name": "[concat(variables('nicName'),copyindex(parameters('nodeNumber')),'nic1')]",
       "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
       "tags": {
@@ -564,7 +571,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('vmName'),copyindex(1))]",
+      "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')))]",
       "apiVersion": "2016-04-30-preview",
       "location": "[resourceGroup().location]",
       "tags": {
@@ -584,7 +591,7 @@
         "count": "[parameters('numberOfInstances')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),copyindex(1),'nic1')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),copyindex(parameters('nodeNumber')),'nic1')]",
         "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
       ],
       "properties": {
@@ -595,7 +602,7 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
         },
         "osProfile": {
-          "computerName": "[concat(parameters('vmName'),copyindex(1))]",
+          "computerName": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')))]",
           "adminUsername": "[parameters('localAdminUserName')]",
           "adminPassword": "[parameters('localAdminPassword')]",
           "windowsConfiguration": {
@@ -632,17 +639,17 @@
           "osDisk": {
             "caching": "ReadWrite",
             "createOption": "FromImage",
-            "name": "[concat(parameters('vmName'),copyindex(1),'-osManagedDisk')]",
+            "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'-osManagedDisk')]",
             "managedDisk": {
               "storageAccountType": "[parameters('StorageAccountType')]"
             }
           },
-          "dataDisks": "[reference(concat(parameters('vmName'),copyindex(1),'-DiskArray')).outputs.dataDiskArray.value]"
+          "dataDisks": "[reference(concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'-DiskArray')).outputs.dataDiskArray.value]"
         },
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'),copyindex(1),'nic1'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'),copyindex(parameters('nodeNumber')),'nic1'))]"
             }
           ]
         }
@@ -650,7 +657,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),copyindex(1),'/', variables('vmExtensionName'))]",
+      "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'/', variables('vmExtensionName'))]",
       "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
       "copy": {
@@ -658,7 +665,7 @@
         "count": "[parameters('numberOfInstances')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyindex(1))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyindex(parameters('nodeNumber')))]"
       ],
       "properties": {
         "publisher": "Microsoft.Powershell",
@@ -702,7 +709,7 @@
     },
     {
       "apiVersion": "2015-01-01",
-      "name": "[concat(parameters('vmName'),copyindex(1),'-FormatDataDisks')]",
+      "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'-FormatDataDisks')]",
       "type": "Microsoft.Resources/deployments",
       "copy": {
         "name": "FormatDataDisksLoop",
@@ -716,7 +723,7 @@
         },
         "parameters": {
           "vmName": {
-            "value": "[concat(parameters('vmName'),copyindex(1))]"
+            "value": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')))]"
           },
           "DiskConfig": {
             "value": "[parameters('DiskConfig')]"
@@ -733,16 +740,16 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('vmName'),copyindex(1)),variables('vmExtensionName'))]"
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('vmName'),copyindex(parameters('nodeNumber'))),variables('vmExtensionName'))]"
       ]
     },
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),copyindex(1),'/BGInfo')]",
+      "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'/BGInfo')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyindex(1))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyindex(parameters('nodeNumber')))]"
       ],
       "copy": {
         "name": "BGInfoLoop",
