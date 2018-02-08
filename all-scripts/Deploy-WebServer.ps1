@@ -35,7 +35,7 @@ Configuration DeployWebServer
             WindowsFeature installdotNet35 {             
                 Ensure = "Present"
                 Name   = "Net-Framework-Core"
-                Source = "\\sppoc01.partners.extranet.microsoft.com\DotNet35_2012_R2"
+                Source = "\\I07MPDDFILARM01.partners.extranet.microsoft.com\DotNet35_2012_R2"
             } 
         }
 
@@ -43,14 +43,14 @@ Configuration DeployWebServer
             WindowsFeature installdotNet35 {             
                 Ensure = "Present"
                 Name   = "Net-Framework-Core"
-                Source = "\\sppoc01.partners.extranet.microsoft.com\DotNet35_2016Datacenter"
+                Source = "\\I07MPDDFILARM01.partners.extranet.microsoft.com\DotNet35_2016Datacenter"
             }  
         }
         elseif ((Get-WmiObject Win32_OperatingSystem).Name.split("|")[0] -eq "Microsoft Windows Server 2012 Datacenter") {
             WindowsFeature installdotNet35 {             
                 Ensure = "Present"
                 Name   = "Net-Framework-Core"
-                Source = "\\sppoc01.partners.extranet.microsoft.com\DotNet35_2012_Datacenter"
+                Source = "\\I07MPDDFILARM01.partners.extranet.microsoft.com\DotNet35_2012_Datacenter"
             }  
         }
 	    
