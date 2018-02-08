@@ -33,6 +33,13 @@
         "description": "Number of VMs to deploy"
       }
     },
+    "nodeNumber": {
+      "defaultValue": 1,
+      "type": "Int",
+      "metadata": {
+        "Description": "Number of Azure VM to create."
+      }
+    },
     "localAdminUserName": {
       "type": "string",
       "defaultValue": "",
@@ -95,7 +102,7 @@
         "description": "Allowed Windows values: 2008-R2-SP1, 2012-Datacenter, 2012-R2-Datacenter. Allowed SQL values: Enterprise, Standard, Web, Express."
       }
     },
-   "H_DriveSize": {
+    "H_DriveSize": {
       "type": "int",
       "metadata": {
         "description": "The size in GB for the H drive. "
@@ -133,7 +140,7 @@
     },
     "E_DriveSize": {
       "type": "int",
-        "metadata": {
+      "metadata": {
         "description": "The size in GB for the E drive."
       }
     },
@@ -253,7 +260,7 @@
     "apiVersion": "2015-06-15",
     "MSITVersion": "2.1.1",
  
-     "branch": "master",
+     "branch": "develop",
     "scriptsURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-scripts/')]",
     "nestedURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-nested/')]",
 
@@ -323,7 +330,7 @@
   "resources": [
     {
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('nicName'),copyindex(1),'nic1')]",
+      "name": "[concat(variables('nicName'),copyindex(parameters('nodeNumber')),'nic1')]",
       "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
       "tags": {
@@ -434,7 +441,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('vmName'),copyindex(1))]",
+      "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')))]",
       "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
       "tags": {
@@ -451,7 +458,7 @@
         "count": "[parameters('numberOfInstances')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),copyindex(1),'nic1')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),copyindex(parameters('nodeNumber')),'nic1')]",
         "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
       ],
       "properties": {
@@ -462,7 +469,7 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
         },
         "osProfile": {
-          "computerName": "[concat(parameters('vmName'),copyindex(1))]",
+          "computerName": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')))]",
           "adminUsername": "[parameters('localAdminUserName')]",
           "adminPassword": "[parameters('localAdminPassword')]",
           "windowsConfiguration": {
@@ -499,58 +506,58 @@
           "osDisk": {
             "caching": "ReadWrite",
             "createOption": "FromImage",
-            "name": "[concat(parameters('vmName'),copyindex(1),'-osDisk')]",
+            "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'-osDisk')]",
             "vhd": {
-              "uri": "[concat(variables('osDiskVhdName'),copyindex(1),'.vhd')]"
+              "uri": "[concat(variables('osDiskVhdName'),copyindex(parameters('nodeNumber')),'.vhd')]"
             }
           },
-         "dataDisks": [
-          {
-            "name": "[concat(parameters('vmName'),copyindex(1),'-DataDiskH')]",
-            "lun": 0,
-            "vhd": {
-              "uri": "[concat('http://', parameters('userImageStorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),copyindex(1), 'datadiskH.vhd')]"
+          "dataDisks": [
+            {
+              "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'-DataDiskH')]",
+              "lun": 0,
+              "vhd": {
+                "uri": "[concat('http://', parameters('userImageStorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),copyindex(1), 'datadiskH.vhd')]"
+              },
+              "createOption": "Empty",
+              "caching": "[parameters('H_DriveCache')]",
+              "diskSizeGB": "[parameters('H_DriveSize')]"
             },
-            "createOption": "Empty",
-            "caching": "[parameters('H_DriveCache')]",
-            "diskSizeGB": "[parameters('H_DriveSize')]"
-          },
-          {
-            "name": "[concat(parameters('vmName'),copyindex(1),'-DataDiskO')]",
-            "lun": 1,
-            "vhd": {
-              "uri": "[concat('http://', parameters('userImageStorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),copyindex(1), 'datadiskO.vhd')]"
+            {
+              "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'-DataDiskO')]",
+              "lun": 1,
+              "vhd": {
+                "uri": "[concat('http://', parameters('userImageStorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),copyindex(1), 'datadiskO.vhd')]"
+              },
+              "createOption": "Empty",
+              "caching": "[parameters('O_DriveCache')]",
+              "diskSizeGB": "[parameters('O_DriveSize')]"
             },
-            "createOption": "Empty",
-            "caching": "[parameters('O_DriveCache')]",
-            "diskSizeGB": "[parameters('O_DriveSize')]"
-          },
-          {
-            "name": "[concat(parameters('vmName'),copyindex(1),'-DataDiskT')]",
-            "lun": 2,
-            "vhd": {
-              "uri": "[concat('http://', parameters('userImageStorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),copyindex(1), 'datadiskT.vhd')]"
+            {
+              "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'-DataDiskT')]",
+              "lun": 2,
+              "vhd": {
+                "uri": "[concat('http://', parameters('userImageStorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),copyindex(1), 'datadiskT.vhd')]"
+              },
+              "createOption": "Empty",
+              "caching": "[parameters('T_DriveCache')]",
+              "diskSizeGB": "[parameters('T_DriveSize')]"
             },
-            "createOption": "Empty",
-            "caching": "[parameters('T_DriveCache')]",
-            "diskSizeGB": "[parameters('T_DriveSize')]"
-          },
-          {
-            "name": "[concat(parameters('vmName'),copyindex(1),'-DataDiskE')]",
-            "lun": 3,
-            "vhd": {
-              "uri": "[concat('http://', parameters('userImageStorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),copyindex(1), 'datadiskE.vhd')]"
-            },
-            "createOption": "Empty",
-            "caching": "[parameters('E_DriveCache')]",
-            "diskSizeGB": "[parameters('E_DriveSize')]"
-          }
+            {
+              "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'-DataDiskE')]",
+              "lun": 3,
+              "vhd": {
+                "uri": "[concat('http://', parameters('userImageStorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),copyindex(1), 'datadiskE.vhd')]"
+              },
+              "createOption": "Empty",
+              "caching": "[parameters('E_DriveCache')]",
+              "diskSizeGB": "[parameters('E_DriveSize')]"
+            }
           ]
         },
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'),copyindex(1),'nic1'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'),copyindex(parameters('nodeNumber')),'nic1'))]"
             }
           ]
         }
@@ -558,7 +565,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),copyindex(1),'/', variables('vmExtensionName'))]",
+      "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'/', variables('vmExtensionName'))]",
       "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
       "copy": {
@@ -566,7 +573,7 @@
         "count": "[parameters('numberOfInstances')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyindex(1))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyindex(parameters('nodeNumber')))]"
       ],
       "properties": {
         "publisher": "Microsoft.Powershell",
@@ -602,7 +609,7 @@
     },
     {
       "apiVersion": "2015-01-01",
-      "name": "[concat(parameters('vmName'),copyindex(1),'-FormatDataDisks')]",
+      "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'-FormatDataDisks')]",
       "type": "Microsoft.Resources/deployments",
       "copy": {
         "name": "FormatDataDisksLoop",
@@ -616,7 +623,7 @@
         },
         "parameters": {
           "vmName": {
-            "value": "[concat(parameters('vmName'),copyindex(1))]"
+            "value": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')))]"
           },
           "H_DriveSize": {
             "value": "[parameters('H_DriveSize')]"
@@ -633,17 +640,17 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('vmName'),copyindex(1)),variables('vmExtensionName'))]"
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('vmName'),copyindex(parameters('nodeNumber'))),variables('vmExtensionName'))]"
 
       ]
     },
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),copyindex(1),'/BGInfo')]",
+      "name": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')),'/BGInfo')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyindex(1))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyindex(parameters('nodeNumber')))]"
       ],
       "copy": {
         "name": "BGInfoLoop",
@@ -653,7 +660,7 @@
         "publisher": "Microsoft.Compute",
         "type": "BGInfo",
         "typeHandlerVersion": "2.1",
-        "settings": { },
+        "settings": {},
         "protectedSettings": null
       }
     }

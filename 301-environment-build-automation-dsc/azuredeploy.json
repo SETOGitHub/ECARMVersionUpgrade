@@ -245,7 +245,7 @@
   },
   "variables": {
 
-     "branch": "master",
+     "branch": "develop",
     "SQLfolder": "/301-multi-vm-domain-join-SQLILB-build-dsc/",
     "IISfolder": "/301-multi-vm-domain-join-WebILB-build-dsc/",
     "SQLbaseURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),variables('SQLfolder'))]",
