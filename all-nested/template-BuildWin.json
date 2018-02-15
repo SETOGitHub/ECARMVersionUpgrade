@@ -39,7 +39,7 @@
   },
   "variables": {
 
-     "branch": "master",
+     "branch": "develop",
     "scriptsURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-scripts/')]",
     "nestedURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-nested/')]",
 

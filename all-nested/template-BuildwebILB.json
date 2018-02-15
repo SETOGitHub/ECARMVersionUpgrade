@@ -66,7 +66,7 @@
   },
   "variables": {
 
-     "branch": "master",
+     "branch": "develop",
     "scriptsURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-scripts/')]",
 
     "vmILBExtensionName": "ConfigureWebILB",
