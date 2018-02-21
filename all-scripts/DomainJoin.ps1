@@ -687,7 +687,7 @@ configuration DomainJoin
 				   
 				Try {
 					  
-					if (!(Get-EventLog -List | where {$_.Log -eq 'Patching'})) {New-EventLog -LogName Patching -Source Scripts}  
+					if (!(Get-EventLog -List | where {$_.Log -eq 'Patching'})) {New-EventLog -LogName Patching -Source PatchScripts}  
 
 					New-PSDrive -Name $tempPSDrive -PSProvider FileSystem -Root $WSUSLocation -Credential $DomainCreds                    
 					Write-EventLog -LogName Patching -Source PatchScripts -EntryType Information -EventId 1 -Message "New PSdrive $tempPSDrive created successfully"
