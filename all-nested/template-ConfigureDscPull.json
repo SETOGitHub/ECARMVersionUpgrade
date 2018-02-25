@@ -89,9 +89,9 @@
         }
     },
     "variables": {
-      "BaseURL": "https://github.com/Azure/azure-quickstart-templates/raw/master/",
+      "BaseURL": "https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/master/",
       "configurationFunction": "UpdateLCMforAAPull.ps1\\ConfigureLCMforAAPull",
-      "modulesUrl": "[concat(variables('BaseURL'),'dsc-extension-azure-automation-pullserver/UpdateLCMforAAPull.zip')]"
+      "modulesUrl": "[concat(variables('BaseURL'),'all-scripts/UpdateLCMforAAPull.zip')]"
     },
   "resources": [
     {
