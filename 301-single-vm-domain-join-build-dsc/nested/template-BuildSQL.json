@@ -98,7 +98,7 @@
   },
   "variables": {
 
-     "branch": "develop",
+     "branch": "mohussai",
     "folder": "/301-single-vm-domain-join-build-dsc/",
     "baseURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),variables('folder'))]",
 

@@ -88,7 +88,7 @@
   },
   "variables": {
 
-     "branch": "develop",
+     "branch": "mohussai",
     "scriptsURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-scripts/')]",
 
     "vmILBExtensionName": "ConfigureILB",

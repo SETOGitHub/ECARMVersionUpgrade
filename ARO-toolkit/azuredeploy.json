@@ -48,7 +48,7 @@
   },
   "variables": {
 
-    "branch": "develop",
+    "branch": "mohussai",
     "_artifactsLocation": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/ARO-toolkit')]",
      "OMSWorkspaceId": "",
     "nestedTemplates": {
