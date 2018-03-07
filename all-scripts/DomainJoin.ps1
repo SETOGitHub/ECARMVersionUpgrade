@@ -670,6 +670,61 @@ configuration DomainJoin
             }    
             DependsOn  = '[Script]SetPowerPatchJob'
         }
+		Script WSUSPatch {
+			GetScript  = {
+				@{
+				}
+			}
+			   
+			Setscript  = {   
+
+				$WSUSLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\WSUSPatch'                    
+				$targetDrive = 'C:\'
+				$WSUSInstallScriptPath = $targetDrive + 'WSUSPatch\GetPatches.ps1'
+				$tempPSDrive = "Z"
+				   
+				Try {
+					  
+					if (!(Get-EventLog -List | where {$_.Log -eq 'Patching'})) {New-EventLog -LogName Patching -Source PatchScripts}  
+
+					New-PSDrive -Name $tempPSDrive -PSProvider FileSystem -Root $WSUSLocation -Credential $DomainCreds                    
+					Write-EventLog -LogName Patching -Source PatchScripts -EntryType Information -EventId 1 -Message "New PSdrive $tempPSDrive created successfully"
+
+					
+					Copy-Item $WSUSLocation -Destination $targetDrive -Recurse -Force
+					Write-EventLog -LogName Patching -Source PatchScripts -EntryType Information -EventId 1 -Message "Copied patching script from Network location to $targetDrive"
+
+					Remove-PSDrive $tempPSDrive -Force
+					Write-EventLog -LogName Patching -Source PatchScripts -EntryType Information -EventID 1 -Message "PSdrive $tempPSDrive removed successfully"
+				}
+
+				Catch {
+					$customError = $_.Exception.Message
+					Write-EventLog -LogName Patching -Source PatchScripts -EntryType Error -EventId 1 -Message $customError
+				}
+			   
+				Try {
+					schtasks /Create /RU "NT Authority\System" /F /SC "OnStart" /delay "0001:00" /TN "GetPatches" /TR "powershell.exe -file $WSUSInstallScriptPath"
+					#powershell -ExecutionPolicy Unrestricted -File $WSUSInstallScriptPath -targetDrive $targetDrive -Force
+					Write-EventLog -LogName Patching -Source PatchScripts -EntryType Information -EventId 2 -Message "Kicked off WSUS patching installation script at Location - $WSUSInstallScriptPath"
+				}
+				Catch {
+					$customError = $_.Exception.Message
+					Write-EventLog -LogName Patching -Source PatchScripts -EntryType Error -EventId 2 -Message $customError
+				}
+
+			}
+					
+			TestScript = {
+				$WSUSLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\WSUSPatch'
+				$targetDrive = 'C:\'
+				$WSUSInstallScriptPath = $targetDrive + 'WSUSPatch\GetPatches.ps1'
+				if (Test-Path $WSUSInstallScriptPath) {return $true}
+				else {return $false}
+			 
+			}    
+			DependsOn  = '[Script]InstallXpert'
+		}
         ############################################
         # End
         ############################################
