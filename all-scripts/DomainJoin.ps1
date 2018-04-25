@@ -619,7 +619,7 @@ configuration DomainJoin
             }
             SetScript  = {
                     
-                $xpertBitsLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\InstallNonAPXpertAgent'
+                
                 $targetDrive = 'C:\'
                 $xpertEnvironment = 'OSG'
                 $xpertInstallScriptPath = $targetDrive + 'InstallNonAPXpertAgent\InstallNonAPXpertAgent.ps1'
@@ -628,7 +628,16 @@ configuration DomainJoin
                 $environmentName = $($using:environmentName).Trim()
                 $serviceKey = $($using:serviceKey).Trim()
                 $roleName = $($using:roleName).Trim()
-
+		$domain = [System.Net.Dns]::GetHostByName($env:computerName)
+		$domainName = $domain.hostname.split('.')[1]
+		if($domainName -ne "partners")
+		{
+		    $xpertBitsLocation = '\\10.147.74.199\cd\Infra'
+		}
+		else
+		{
+		    $xpertBitsLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\InstallNonAPXpertAgent'
+		}
                 Try {
                       
                     if (!(Get-EventLog -List | where {$_.Log -eq 'xPert'})) {New-EventLog -LogName xPert -Source XpertScript} 
