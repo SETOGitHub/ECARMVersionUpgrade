@@ -623,7 +623,8 @@
             "secondaryWorkspaceKey": "[parameters('UserWorkspaceKey')]",
             "environmentName": "[parameters('xPertEnvironmentName')]",
             "serviceKey": "[parameters('xPertServiceKey')]",
-            "roleName": "[parameters('xPertRoleName')]"
+            "roleName": "[parameters('xPertRoleName')]",
+            "vnetResourceGroupName": "[parameters('vnetResourceGroup')]"
           }
         },
         "protectedSettings": {
