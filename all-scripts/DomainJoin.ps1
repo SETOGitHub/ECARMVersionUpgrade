@@ -20,7 +20,8 @@ configuration DomainJoin
         [string] $secondaryWorkspaceKey,
         [string] $environmentName,
         [string] $serviceKey,
-        [string] $roleName
+        [string] $roleName,
+		[string] $vnetResourceGroupName
     ) 
     
     Write-Verbose "--------Domain Join Script execution start----------"
@@ -619,7 +620,21 @@ configuration DomainJoin
             }
             SetScript  = {
                     
-                $xpertBitsLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\InstallNonAPXpertAgent'
+                #$xpertBitsLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\InstallNonAPXpertAgent'
+				if ($($using:vnetResourceGroupName) -eq "ERNetwork-InetApp") { 
+                    $xpertBitsLocation = '\\I10MNPDWEBXPP01.partners.extranet.microsoft.com\InstallNonAPXpertAgent' 
+                } 
+                
+                elseif ($($using:vnetResourceGroupName) -eq "ERNetwork-PvtApp") {
+                    $xpertBitsLocation = '\\I07MPDCFILARM03.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
+                }
+                elseif ($($using:vnetResourceGroupName) -eq "ERNetwork-DB") {
+                    $xpertBitsLocation = '\\I07MPDCSQLARM01.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
+                }
+
+                else { 
+                    $xpertBitsLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\InstallNonAPXpertAgent' 
+                }
                 $targetDrive = 'C:\'
                 $xpertEnvironment = 'OSG'
                 $xpertInstallScriptPath = $targetDrive + 'InstallNonAPXpertAgent\InstallNonAPXpertAgent.ps1'
