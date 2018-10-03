@@ -21,7 +21,7 @@ configuration DomainJoin
         [string] $environmentName,
         [string] $serviceKey,
         [string] $roleName,
-		[string] $vnetResourceGroupName
+        [string] $vnetResourceGroupName
     ) 
     
     Write-Verbose "--------Domain Join Script execution start----------"
