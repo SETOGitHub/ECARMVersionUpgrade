@@ -630,10 +630,10 @@ configuration DomainJoin
                 } 
                 
                 elseif ($($using:vnetResourceGroupName) -eq "ERNetwork-PvtApp") {
-                    $xpertBitsLocation = '\\I10MNPCWEBXPP01.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
+                    $xpertBitsLocation = '\\I07MPDCFILARM03.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
                 }
                 elseif ($($using:vnetResourceGroupName) -eq "ERNetwork-DB") {
-                    $xpertBitsLocation = '\\I10MNPCSQLXPP01.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
+                    $xpertBitsLocation = '\\I07MPDCSQLARM01.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
                 }
 
                 else { 
