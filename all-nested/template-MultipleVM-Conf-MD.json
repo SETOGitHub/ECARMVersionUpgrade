@@ -310,22 +310,17 @@
   "variables": {
     "apiVersion": "2015-06-15",
     "MSITVersion": "2.1.2",
-
-     "branch": "develop",
+    "branch": "hotfix",
     "scriptsURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-scripts/')]",
     "nestedURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-nested/')]",
-
     "availabilitySetName": "[parameters('AvailabilitySet')]",
     "DomainJoinzip": "DomainJoin.ps1.zip",
     "formatDiskszip": "FormatDataDisk.ps1.zip",
     "formatDiskstemplate": "template-FixedDataDisks.json",
-
     "SetStaticIP": "template-SetStaticIP.json",
-
     "modulesUrl": "[concat(variables('scriptsURL'),variables('DomainJoinzip'))]",
     "FormatDisksUrl": "[concat(variables('nestedURL'), variables('formatDiskstemplate'))]",
     "SetStaticIPUrl": "[concat(variables('nestedURL'),variables('SetStaticIP'))]",
-
     "vnetSubscriptionid": "[subscription().subscriptionId]",
     "vnetID": "[concat('/subscriptions/',variables('vnetSubscriptionid'),'/resourceGroups/',parameters('vnetResourceGroup'),'/providers/Microsoft.Network/virtualnetworks/',parameters('virtualNetwork'))]",
     "imageOffer": "[parameters('imageOffer')]",
@@ -339,7 +334,6 @@
     "domainJoinOptions": 3,
     "vmExtensionName": "DSCExtension",
     "diskCaching": "None",
-
     "SQLPremDisk": {
       "vmSize": "[parameters('vmSize')]",
       "SQLServer": {
@@ -665,7 +659,6 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('vmName'),copyindex(parameters('nodeNumber'))),variables('vmExtensionName'))]"
-
       ]
     },
     {
@@ -690,4 +683,3 @@
     }
   ]
 }
-

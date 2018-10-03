@@ -306,30 +306,24 @@
   "variables": {
     "apiVersion": "2015-06-15",
     "MSITVersion": "2.1.2",
-
-     "branch": "develop",
+    "branch": "hotfix",
     "scriptsURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-scripts/')]",
     "nestedURL": "[concat('https://raw.githubusercontent.com/SETOGitHub/ECARMVersionUpgrade/',variables('branch'),'/all-nested/')]",
-
     "availabilitySetName": "[parameters('AvailabilitySet')]",
     "DomainJoinzip": "DomainJoin.ps1.zip",
     "formatDiskszip": "FormatDataDisk.ps1.zip",
-
     "formatDiskstemplate": "template-DataDisks.json",
     "diskarrayTemplate": "ManagedDiskArray.json",
     "SetStaticIP": "template-SetStaticIP.json",
-
     "modulesUrl": "[concat(variables('scriptsURL'),variables('DomainJoinzip'))]",
     "FormatDisksUrl": "[concat(variables('nestedURL'), variables('formatDiskstemplate'))]",
     "SetStaticIPUrl": "[concat(variables('nestedURL'),variables('SetStaticIP'))]",
-
     "vnetSubscriptionid": "[subscription().subscriptionId]",
     "vnetID": "[concat('/subscriptions/',variables('vnetSubscriptionid'),'/resourceGroups/',parameters('vnetResourceGroup'),'/providers/Microsoft.Network/virtualnetworks/',parameters('virtualNetwork'))]",
     "imageOffer": "[parameters('imageOffer')]",
     "imagePublisher": "[parameters('imagePublisher')]",
     "sku": "[parameters('sku')]",
     "nicName": "[parameters('vmName')]",
-
     "subnetName": "[parameters('subnetName')]",
     "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
     "autologonContent": "[concat('<AutoLogon><Password><Value>',parameters('localAdminPassword'),'</Value></Password><Domain>.</Domain><Enabled>true</Enabled><LogonCount>1</LogonCount><Username>',parameters('localAdminUserName'),'</Username></AutoLogon>')]",
@@ -436,11 +430,21 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "vmName": { "value": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')))]" },
-          "diskCount": { "value": "[parameters('diskCount')]" },
-          "diskCaching": { "value": "[variables('diskCaching')]" },
-          "diskSizeGB": { "value": "[parameters('diskSize')]" },
-          "StorageAccountType": { "value": "[parameters('StorageAccountType')]" }
+          "vmName": {
+            "value": "[concat(parameters('vmName'),copyindex(parameters('nodeNumber')))]"
+          },
+          "diskCount": {
+            "value": "[parameters('diskCount')]"
+          },
+          "diskCaching": {
+            "value": "[variables('diskCaching')]"
+          },
+          "diskSizeGB": {
+            "value": "[parameters('diskSize')]"
+          },
+          "StorageAccountType": {
+            "value": "[parameters('StorageAccountType')]"
+          }
         }
       }
     },
@@ -694,7 +698,6 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('vmName'),copyindex(parameters('nodeNumber'))),variables('vmExtensionName'))]"
-
       ]
     },
     {
@@ -719,4 +722,3 @@
     }
   ]
 }
-

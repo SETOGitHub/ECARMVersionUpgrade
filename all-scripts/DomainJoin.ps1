@@ -53,6 +53,7 @@ configuration DomainJoin
     Add-WindowsFeature RSAT-AD-PowerShell
     import-module activedirectory
     Import-module CloudMSOMS
+    Import-module PSWindowsUpdate
 
     node localhost
     {
@@ -117,7 +118,7 @@ configuration DomainJoin
             $Account1 = $Account.replace('\', '/')			
             $path = "C:\Admins\$username.ps1"
             New-Item $path -type file -force -Value "([ADSI](`"WinNT://$env:COMPUTERNAME/administrators,group`")).Add(`"WinNT://`" + `"$Account1`")"
-			
+            
             schtasks /Create /RU "NT AUTHORITY\SYSTEM" /F /SC "OnStart" /delay "0001:00" /TN "$AddJobName" /TR "powershell.exe -file $path"
 
             schtasks /Create /RU "NT AUTHORITY\SYSTEM" /F /SC "Once" /st $starttime /z /v1 /TN "$RemoveJobName" /TR "schtasks.exe /delete /tn $AddJobName /f"
@@ -621,20 +622,24 @@ configuration DomainJoin
             SetScript  = {
                     
                 #$xpertBitsLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\InstallNonAPXpertAgent'
-				if ($($using:vnetResourceGroupName) -eq "ERNetwork-InetApp") { 
+                
+                #$domain = [System.Net.Dns]::GetHostByName($env:computerName)
+                #$domainName = $domain.hostname.split('.')[1] 
+                if ($($using:vnetResourceGroupName) -eq "ERNetwork-InetApp") { 
                     $xpertBitsLocation = '\\I10MNPDWEBXPP01.partners.extranet.microsoft.com\InstallNonAPXpertAgent' 
                 } 
                 
                 elseif ($($using:vnetResourceGroupName) -eq "ERNetwork-PvtApp") {
-                    $xpertBitsLocation = '\\I07MPDCFILARM03.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
+                    $xpertBitsLocation = '\\I10MNPCWEBXPP01.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
                 }
                 elseif ($($using:vnetResourceGroupName) -eq "ERNetwork-DB") {
-                    $xpertBitsLocation = '\\I07MPDCSQLARM01.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
+                    $xpertBitsLocation = '\\I10MNPCSQLXPP01.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
                 }
 
                 else { 
                     $xpertBitsLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\InstallNonAPXpertAgent' 
                 }
+                
                 $targetDrive = 'C:\'
                 $xpertEnvironment = 'OSG'
                 $xpertInstallScriptPath = $targetDrive + 'InstallNonAPXpertAgent\InstallNonAPXpertAgent.ps1'
@@ -685,6 +690,10 @@ configuration DomainJoin
             }    
             DependsOn  = '[Script]SetPowerPatchJob'
         }
+
+        
+
+
         ############################################
         # End
         ############################################
