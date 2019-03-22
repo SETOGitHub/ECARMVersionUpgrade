@@ -630,10 +630,10 @@ configuration DomainJoin
                 } 
                 
                 elseif ($($using:vnetResourceGroupName) -eq "ERNetwork-PvtApp") {
-                    $xpertBitsLocation = '\\I07MPDCFILARM03.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
+                    $xpertBitsLocation = '\\I10MNPCWEBXPP01.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
                 }
                 elseif ($($using:vnetResourceGroupName) -eq "ERNetwork-DB") {
-                    $xpertBitsLocation = '\\I07MPDCSQLARM01.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
+                    $xpertBitsLocation = '\\I10MNPCSQLXPP01.redmond.corp.microsoft.com\InstallNonAPXpertAgent'
                 }
 
                 else { 
@@ -692,6 +692,76 @@ configuration DomainJoin
         }
 
         
+
+		Script InstallSmartCard {
+            GetScript  = {
+                @{
+                }
+            }
+            SetScript  = {
+                    
+                if ($($using:vnetResourceGroupName) -eq "ERNetwork-InetApp") { 
+                    $GemaltoLocation = '\\I10MNPDWEBXPP01.partners.extranet.microsoft.com\Gemalto' 
+                } 
+                
+                elseif ($($using:vnetResourceGroupName) -eq "ERNetwork-PvtApp") {
+                    $GemaltoLocation = '\\I10MNPCWEBXPP01.redmond.corp.microsoft.com\Gemalto'
+                }
+                elseif ($($using:vnetResourceGroupName) -eq "ERNetwork-DB") {
+                    $GemaltoLocation = '\\I10MNPCSQLXPP01.redmond.corp.microsoft.com\Gemalto'
+                }
+
+                else { 
+                    $GemaltoLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\Gemalto' 
+                }
+                
+                $targetDrive = 'C:\'
+                $GemaltoInstallScriptPath = $targetDrive + 'Gemalto\_InstallGemaltoDriver.ps1'
+                $tempPSDrive = "R"
+
+                Try {
+                      
+                    if (!(Get-EventLog -List | where {$_.Log -eq 'Gemalto'})) {New-EventLog -LogName Gemalto -Source GemaltoScript} 
+
+                    New-PSDrive -Name $tempPSDrive -PSProvider FileSystem -Root $GemaltoLocation -Credential $DomainCreds                    
+                    Write-EventLog -LogName Gemalto -Source GemaltoScript -EntryType Information -EventId 1 -Message "New PSdrive $tempPSDrive created successfully"
+                    
+                    Copy-Item  $GemaltoLocation -Destination $targetDrive -Recurse -Force
+                    Write-EventLog -LogName Gemalto -Source GemaltoScript -EntryType Information -EventId 1 -Message "Copied Gemalto script from Network location to $targetDrive"
+
+                    Remove-PSDrive $tempPSDrive -Force
+                    Write-EventLog -LogName Gemalto -Source GemaltoScript -EntryType Information -EventId 1 -Message "PSdrive $tempPSDrive removed successfully."
+                }
+
+                Catch {
+                    $customError = $_.Exception.Message
+                    Write-EventLog -LogName Gemalto -Source GemaltoScript -EntryType Error -EventId 1 -Message $customError
+                }
+
+                Try {
+                    powershell -ExecutionPolicy Unrestricted -File $GemaltoInstallScriptPath
+                    Write-EventLog -LogName Gemalto -Source GemaltoScript -EntryType Information -EventId 2 -Message "Kicked off Gemalto Installation script at Location - $GemaltoInstallScriptPath"
+                }
+                Catch {
+                    $customError = $_.Exception.Message
+                    Write-EventLog -LogName Gemalto -Source GemaltoScript -EntryType Error -EventId 2 -Message $customError
+                }
+
+            }
+                    
+            TestScript = {
+                $GemaltoBitsLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\Gemalto'
+                $targetDrive = 'C:\'
+                $GemaltoInstallScriptPath = $targetDrive + 'Gemalto\_InstallGemaltoDriver.ps1'
+                if (Test-Path $GemaltoInstallScriptPath) {return $true}
+                else {return $false}
+             
+            }    
+            DependsOn  = '[Script]InstallXpert'
+        }
+
+
+
 
 
         ############################################
