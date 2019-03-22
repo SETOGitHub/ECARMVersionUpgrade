@@ -750,11 +750,7 @@ configuration DomainJoin
             }
                     
             TestScript = {
-                $GemaltoBitsLocation = '\\I07MPDDFILARM01.partners.extranet.microsoft.com\Gemalto'
-                $targetDrive = 'C:\'
-                $GemaltoInstallScriptPath = $targetDrive + 'Gemalto\_InstallGemaltoDriver.ps1'
-                if (Test-Path $GemaltoInstallScriptPath) {return $true}
-                else {return $false}
+                return $false
              
             }    
             DependsOn  = '[Script]InstallXpert'
