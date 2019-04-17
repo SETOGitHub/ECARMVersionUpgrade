@@ -31,6 +31,7 @@ Configuration DeployWebServer
             } 
         } 
 
+        <#
         if ((Get-WmiObject Win32_OperatingSystem).Name.split("|")[0] -eq "Microsoft Windows Server 2012 R2 Datacenter") {
             WindowsFeature installdotNet35 {             
                 Ensure = "Present"
@@ -53,6 +54,7 @@ Configuration DeployWebServer
                 Source = "\\I07MPDDFILARM01.partners.extranet.microsoft.com\DotNet35_2012_Datacenter"
             }  
         }
+        #>
 	    
     }
 
